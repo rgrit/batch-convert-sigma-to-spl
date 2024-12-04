@@ -94,7 +94,7 @@ def process_directory_recursive_to_csv(directory_path, output_file):
 
 
 # Specify the directory containing YAML files and the output CSV file path
-directory = r"C:\Users\jsph_\sigma\rules"  # Change this to your directory
+directory = r"C:\SigmaRules\sigma\rules"  # Change this to your directory
 output_csv = "sigma_rules_output.csv"
 
 # Process the directory and save results to CSV
