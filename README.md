@@ -31,8 +31,8 @@ pip install PyYAML pandas sigma
 ## Installation and Setup
 1. Clone or download this repository to your local machine:
    ```bash
-   git clone https://github.com/rgrit/batch-convert-sigma-to-splunk.git
-   cd batch-convert-sigma-to-splunk
+   git clone https://github.com/rgrit/batch-convert-sigma-to-spl.git
+   cd batch-convert-sigma-to-spl
    ```
 
 2. Install the required Python dependencies:
