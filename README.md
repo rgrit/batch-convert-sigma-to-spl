@@ -51,7 +51,7 @@ pip install PyYAML pandas sigma
 
 2. Run the script:
    ```bash
-   python sigma_to_splunk.py
+   python batch_convert_spl.py
    ```
 
 3. Review the results:
