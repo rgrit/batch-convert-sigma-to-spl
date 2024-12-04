@@ -1,0 +1,20 @@
+title: Unauthorized Access Detection
+id: "22222222-2222-2222-2222-222222222222"
+description: Detects attempts to access restricted files or directories
+author: Analyst2
+date: 2024-12-04
+status: stable
+logsource:
+  category: file_access
+  product: linux
+detection:
+  selection:
+    Command: ['cat', 'less', 'more']
+    File: ['/etc/passwd', '/etc/shadow']
+  condition: selection
+falsepositives:
+  - Maintenance tasks by administrators
+level: high
+tags:
+  - attack.discovery
+  - attack.t1003

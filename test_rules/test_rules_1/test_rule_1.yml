@@ -1,0 +1,21 @@
+title: Example Sigma Rule 1
+id: "11111111-1111-1111-1111-111111111111"
+description: Detects successful logins using unusual accounts
+author: Analyst1
+date: 2024-12-04
+status: experimental
+logsource:
+  category: authentication
+  product: windows
+detection:
+  selection:
+    EventID: 4624
+    LogonType: 3
+    AccountName: ['admin', 'service_account']
+  condition: selection
+falsepositives:
+  - Expected admin logins
+level: medium
+tags:
+  - attack.credential_access
+  - attack.t1078
