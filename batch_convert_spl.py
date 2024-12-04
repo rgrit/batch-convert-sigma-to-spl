@@ -6,12 +6,22 @@ from sigma.backends.splunk import SplunkBackend
 from sigma.exceptions import SigmaError
 
 
+def clean_data(value):
+    """
+    Cleans data for CSV output by removing invalid characters or truncating long strings.
+    """
+    if isinstance(value, str):
+        # Replace invalid characters
+        value = value.replace("*", "").replace("?", "").replace("\"", "").strip()
+        # Truncate excessively long strings
+        if len(value) > 32000:  # Typical safe limit for CSV files
+            value = value[:32000] + "..."
+    return value
+
+
 def get_sigma_title(file_path):
     """
     Extracts the title field from a Sigma rule YAML file.
-
-    :param file_path: Path to the YAML file.
-    :return: The title of the Sigma rule or 'Title not found'.
     """
     try:
         with open(file_path, 'r') as file:
@@ -26,9 +36,6 @@ def get_sigma_title(file_path):
 def convert_to_splunk(file_path):
     """
     Converts a Sigma rule to a Splunk query.
-
-    :param file_path: Path to the YAML file.
-    :return: The Splunk query or an error message.
     """
     try:
         with open(file_path, 'r') as file:
@@ -49,20 +56,15 @@ def convert_to_splunk(file_path):
         return f"Error reading file: {e}"
 
 
-def process_directory_recursive_to_excel(directory_path, output_file):
+def process_directory_recursive_to_csv(directory_path, output_file):
     """
-    Recursively finds all YAML files in a directory and its subdirectories,
-    extracts their titles, converts the rules to Splunk queries,
-    and saves the results to an Excel file.
-
-    :param directory_path: Path to the directory.
-    :param output_file: Path to save the Excel file.
+    Recursively processes a directory of YAML files, extracts metadata, and saves results to a CSV file.
     """
     if not os.path.isdir(directory_path):
         print(f"The provided path is not a directory: {directory_path}")
         return
 
-    data = []  # Store results for Excel
+    data = []  # Store results for CSV output
     print(f"Processing directory: {directory_path}\n")
 
     for root, _, files in os.walk(directory_path):
@@ -72,12 +74,12 @@ def process_directory_recursive_to_excel(directory_path, output_file):
                 title = get_sigma_title(file_path)
                 splunk_query = convert_to_splunk(file_path)
 
-                # Add results to the list for Excel output
+                # Add results to the list for CSV output
                 data.append({
-                    "File Path": file_path,
-                    "File Name": file_name,
-                    "Title": title,
-                    "Splunk Query": splunk_query
+                    "File Path": clean_data(file_path),
+                    "File Name": clean_data(file_name),
+                    "Title": clean_data(title),
+                    "Splunk Query": clean_data(splunk_query)
                 })
 
                 # Print to the terminal
@@ -85,15 +87,15 @@ def process_directory_recursive_to_excel(directory_path, output_file):
                 print(f"Title: {title}")
                 print(f"Splunk Query: {splunk_query}\n")
 
-    # Save to Excel
+    # Save to CSV
     df = pd.DataFrame(data, columns=["File Path", "File Name", "Title", "Splunk Query"])
-    df.to_excel(output_file, index=False)
-    print(f"Excel file created: {output_file}")
+    df.to_csv(output_file, index=False)
+    print(f"CSV file created: {output_file}")
 
 
-# Specify the directory containing YAML files and the output Excel file path
-directory = r"test_rules"  # Change this to your directory
-output_excel = "sigma_rules_output.xlsx"
+# Specify the directory containing YAML files and the output CSV file path
+directory = r"C:\Users\jsph_\sigma\rules"  # Change this to your directory
+output_csv = "sigma_rules_output.csv"
 
-# Process the directory and save results to Excel
-process_directory_recursive_to_excel(directory, output_excel)
+# Process the directory and save results to CSV
+process_directory_recursive_to_csv(directory, output_csv)
